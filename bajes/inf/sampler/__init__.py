@@ -103,7 +103,7 @@ class SamplerBody(object):
     def restore(self, **kwargs):
 
         # extract container
-        logger.info("Restoring inference from existing container ...")
+        logger.info("Restoring inference from existing container ...") # passa di qua
         dc          = data_container(self.outdir + self.resume)
         container   = dc.load()
 

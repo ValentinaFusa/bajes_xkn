@@ -240,6 +240,10 @@ class KNLikelihood(Likelihood):
 
     def log_like(self, params):
 
+        if params['vel_dynamics'] > 0.333 or params['vel_dynamics'] < 1e-4:
+            logL = -np.inf
+            return logL
+
         # compute lightcurve
 
         # If the used model is one inside bajes, 'mags' is a magnitudes dictionary
@@ -250,9 +254,9 @@ class KNLikelihood(Likelihood):
         if self.use_calib_sigma:
             for bi in self.filters.bands:
 
-                if params['xkn_config'] == None:  # bajes model
+                if params['xkn_config'] == None:  # Grossman model
                     lambda_bi = bi
-                    interp_mag  = np.interp(self.filters.times[bi], self.light.times+params['t_gps'], mags[lambda_bi])
+                    interp_mag = np.interp(self.filters.times[bi], self.light.times+params['t_gps'], mags[lambda_bi])
                 
                 else: # xkn model
                     # tranform keys from band names into lambdas[nm] (ONLY FOR XKN MODELS)
@@ -266,7 +270,7 @@ class KNLikelihood(Likelihood):
         else:
             for bi in self.filters.bands:
 
-                if params['xkn_config'] == None:  # bajes model
+                if params['xkn_config'] == None:  # Grossman model
                     lambda_bi = bi
                     interp_mag  = np.interp(self.filters.times[bi], self.light.times+params['t_gps'], mags[lambda_bi])
                 
@@ -276,6 +280,7 @@ class KNLikelihood(Likelihood):
                     interp_mag  = np.interp(self.filters.times[bi], mags[lambda_bi]['time']+params['t_gps'], mags[lambda_bi]['mag'])
 
                 residuals   = ((self.filters.magnitudes[bi]-interp_mag)/self.filters.mag_stdev[bi])**2.
-                logL       += -0.5*residuals.sum() + self.logNorm
+                logL       += -0.5*residuals.sum()
+            logL += self.logNorm
 
         return logL

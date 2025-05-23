@@ -8,19 +8,19 @@ units_h        = 6.6260755e-27     #[erg*s]
 units_kB       = 1.380658e-16      #[erg/K]
 units_pc2cm    = 3.085678e+18      #[cm/pc]
 
-#
-# NR-informed relations
-#
+#####
+# NR-informed relations "old"
+#####
 
-def NRfit_recal_mass_dyn(mchirp, q, lambda1, lambda2, NR_fit_recal_mdyn, **kwargs):
+def NRfit_recal_mass_dyn(mchirp, q, lambda1, lambda2, **kwargs): #NR_fit_recal_mdyn
     mtot        = mchirp / (q/(1+q)**2)**0.6
-    log_mdyn    = NRfit_log_mass_dyn(mtot, q, lambda1, lambda2) * (1. + NR_fit_recal_mdyn)
+    log_mdyn    = NRfit_log_mass_dyn(mtot, q, lambda1, lambda2) #* (1. + NR_fit_recal_mdyn)
     mdyn        = mtot * np.exp(log_mdyn)
     return np.max([0., mdyn])
 
-def NRfit_recal_vel_dyn(mchirp, q, lambda1, lambda2, NR_fit_recal_vdyn, **kwargs):
+def NRfit_recal_vel_dyn(mchirp, q, lambda1, lambda2, **kwargs): #NR_fit_recal_vdyn
     mtot    = mchirp / (q/(1+q)**2)**0.6
-    vdyn    = NRfit_vel_dyn(mtot, q, lambda1, lambda2) * (1. + NR_fit_recal_vdyn)
+    vdyn    = NRfit_vel_dyn(mtot, q, lambda1, lambda2) #* (1. + NR_fit_recal_vdyn)
     return np.max([1e-10, vdyn])
 
 def NRfit_recal_mass_wind(mchirp, q, lambda1, lambda2, disk_frac, **kwargs):
@@ -33,10 +33,10 @@ def NRfit_log_mass_dyn(mtot, q, lambda1, lambda2):
     """
         NR-calibrated relation for mass of dynamical ejecta
         Returns log(m_ej/M) where M = m1 + m2 (natural log)
-    """
+    """ # stesso valori che ottengo dal re-fit in mdyn_kn_fit.py
     a0, n0, b1, b2, c1, c2 = [-21.295092178221847, 1.9743123050205846,
                               0.0044685525694660435, -0.0024627659648901452,
-                              -0.5258273201873834, -0.23928655421412218]
+                              -0.5258273201873834, -0.23928655421412218] # verificati (popt)
 
     nu     = q/(1+q)**2
     m1     = mtot * q / (1+q)
@@ -49,8 +49,9 @@ def NRfit_vel_dyn(mtot, q, lambda1, lambda2):
     """
         NR-calibrated relation for velocity of dynamical ejecta
         Returns v_ej / c
-    """
-    a0, n0, b1, b2, c1, c2 = [0.09217372, -4.52017477, -0.02171866, 0.00946049, -0.2176058, 1.32125944]
+    """# stesso valori che ottengo dal fit in vdyn_kn_fit.py (forse prende valori da fit e non da re-fit perchè da residuo più basso(?))
+    a0, n0, b1, b2, c1, c2 = [0.09217372, -4.52017477, -0.02171866, 
+                              0.00946049, -0.2176058, 1.32125944] #verificati (result.x)
 
     nu     = q/(1+q)**2
     m1     = mtot * q / (1+q)
@@ -63,14 +64,157 @@ def NRfit_log_mass_disk(mtot, q, lambda1, lambda2):
     """
         NR-calibrated relation for disk mass
         Returns log(m_disk/M) where M = m1 + m2 (natural log)
-    """
-    alpha, a1, a2, b1, b2, Lbar, Sbar, Abar = [-13.846080565670077,
-                                                4.977942316040381e-06, 1.8902832916214914e-06,
-                                                -0.4708068240433623, 0.33378530243025306,
-                                                558.1230475510761, -176.21011658144016, 1.0095398304221503]
+    """ # stesso valori che ottengo dal re-fit in mdisk_kn_fit.py (solo se commento do_the_plots)
+    alpha, a1, a2, b1, b2, Lbar, Sbar, Abar = [-13.846080565670077, 4.977942316040381e-06, 
+                                               1.8902832916214914e-06, -0.4708068240433623, 
+                                               0.33378530243025306, 558.1230475510761, 
+                                               -176.21011658144016, 1.0095398304221503] #verificati (popt)
 
     m1     = mtot * q / (1+q)
     m2     = mtot / (1+q)
-    corr_l = 1. + Abar*((1./np.pi)*np.arctan((lambda1+lambda2-Lbar)/Sbar) - 0.5)
+    corr_l = 1. + Abar*((1./np.pi)*np.arctan((lambda1+lambda2-Lbar)/Sbar) - 0.5)  # arctan è dispari!
     corr_p = 1 + a1*(lambda1)**2 + a2*(lambda2)**2 + b1*m1**2 + b2*m2**2
     return alpha * corr_l * corr_p
+
+
+#####
+# NR-informed relations "breschi"
+#####
+
+def NRfit_recal_mass_dyn_breschi(mchirp, q, lambda1, lambda2, **kwargs): #NR_fit_recal_mdyn
+    mtot        = mchirp / (q/(1+q)**2)**0.6
+    log_mdyn    = NRfit_log_mass_dyn_breschi(mtot, q, lambda1, lambda2) #* (1. + NR_fit_recal_mdyn)
+    mdyn        = mtot * np.exp(log_mdyn)
+    return np.max([0., mdyn])
+
+def NRfit_recal_vel_dyn_breschi(mchirp, q, lambda1, lambda2, **kwargs): #NR_fit_recal_vdyn
+    mtot    = mchirp / (q/(1+q)**2)**0.6
+    vdyn    = NRfit_vel_dyn_breschi(mtot, q, lambda1, lambda2) #* (1. + NR_fit_recal_vdyn)
+    return np.max([1e-10, vdyn])
+
+def NRfit_recal_mass_wind_breschi(mchirp, q, lambda1, lambda2, disk_frac, **kwargs):
+    mtot        = mchirp / (q/(1+q)**2)**0.6
+    log_m_disk  = NRfit_log_mass_disk_breschi(mtot, q, lambda1, lambda2)
+    mwind       = mtot * np.exp(log_m_disk) * disk_frac
+    return np.max([0., mwind])
+
+def NRfit_log_mass_dyn_breschi(mtot, q, lambda1, lambda2):
+    """
+        NR-calibrated relation for mass of dynamical ejecta
+        Returns log(m_ej/M) where M = m1 + m2 (natural log)
+    """ # re-fit values
+    a0, n0, b1, b2, c1, c2 = [-128.41717311068592, 16.111485804150124,
+                              0.001072666803983363, -0.0005299835909359168,
+                              -0.4939247225352364, -0.5383287345344886]
+
+    nu     = q/(1+q)**2
+    m1     = mtot * q / (1+q)
+    m2     = mtot / (1+q)
+    corr_q = 1. + n0*(1.-4.*nu)
+    corr_p = 1. + b1*np.sqrt(lambda1) + b2*np.sqrt(lambda2) + c1*m1**(-0.25) + c2*m2**(-0.25)
+    return a0 * corr_q * corr_p
+
+def NRfit_vel_dyn_breschi(mtot, q, lambda1, lambda2):
+    """
+        NR-calibrated relation for velocity of dynamical ejecta
+        Returns v_ej / c
+    """# re-fit values
+    a0, n0, b1, b2, c1, c2 = [0.09885394177197987, -6.581266594480056, -0.03906332013176158, 
+                              -0.03004155486380879, 1.1913263819216484, 0.6699361738637798] 
+    
+    nu     = q/(1+q)**2
+    m1     = mtot * q / (1+q)
+    m2     = mtot / (1+q)
+    corr_q = 1. + n0*(1.-4.*nu)
+    corr_p = 1. + b1*np.sqrt(lambda1) + b2*np.sqrt(lambda2) + c1*m1 + c2*m2
+    return a0 * corr_q * corr_p
+
+def NRfit_log_mass_disk_breschi(mtot, q, lambda1, lambda2):
+    """
+        NR-calibrated relation for disk mass
+        Returns log(m_disk/M) where M = m1 + m2 (natural log)
+    """ # re-fit values
+    alpha, a1, a2, b1, b2, Lbar, Sbar, Abar = [-1.00005048163444, -6.30219031649512e-07, 
+                                               -1.5709263623799608e-07, -0.25794191019918405, 
+                                               -0.5842440314342542, 3.1839377906331714e-05, 
+                                               954.9345228010245, 23.12026340504407] 
+
+    m1     = mtot * q / (1+q)
+    m2     = mtot / (1+q)
+    corr_l = 1. + Abar*((1./np.pi)*np.arctan((lambda1+lambda2-Lbar)/Sbar) - 0.5) 
+    corr_p = 1 + a1*(lambda1)**2 + a2*(lambda2)**2 + b1*m1**2 + b2*m2**2
+    return alpha * corr_l * corr_p
+
+
+#####
+# NR-informed relations "nedora"
+#####
+
+from bajes.obs.gw.utils import compute_lambda_tilde
+
+def NRfit_recal_mass_dyn_nedora(mchirp, q, lambda1, lambda2, **kwargs): #NR_fit_recal_mdyn
+    mtot        = mchirp / (q/(1+q)**2)**0.6
+    m1          = mtot*q/(1+q)
+    m2          = mtot/(1+q)
+    lt          = compute_lambda_tilde(m1, m2, lambda1, lambda2)
+    mdyn10_3    = NRfit_log_mass_dyn_nedora(q, lt) #* (1. + NR_fit_recal_mdyn) #???
+    mdyn        = mdyn10_3*1e-3
+    return np.max([0., mdyn])
+
+def NRfit_recal_vel_dyn_nedora(mchirp, q, lambda1, lambda2, **kwargs):  #NR_fit_recal_vdyn
+    mtot        = mchirp / (q/(1+q)**2)**0.6
+    m1          = mtot*q/(1+q)
+    m2          = mtot/(1+q)
+    lt          = compute_lambda_tilde(m1, m2, lambda1, lambda2)
+    vdyn    = NRfit_vel_dyn_nedora(q, lt) #* (1. + NR_fit_recal_vdyn) #???
+    return np.max([1e-10, vdyn])
+
+def NRfit_recal_mass_wind_nedora(mchirp, q, lambda1, lambda2, disk_frac, **kwargs):
+    mtot        = mchirp / (q/(1+q)**2)**0.6
+    m1          = mtot*q/(1+q)
+    m2          = mtot/(1+q)
+    lt          = compute_lambda_tilde(m1, m2, lambda1, lambda2)
+    m_disk      = NRfit_log_mass_disk_nedora(q, lt)
+    mwind       = m_disk * disk_frac
+    return np.max([0., mwind])
+
+def NRfit_log_mass_dyn_nedora(q, lt):
+    """
+        NR-calibrated relation for mass of dynamical ejecta
+        Returns log(m_ej/M) where M = m1 + m2 (natural log)
+    """ # re-fit values
+    b0, b1, b2, b3, b4, b5 = [19.11486051225742, -5.810359396825988,
+                              -0.054258334940957276, -2.528180825757026,
+                              0.028827084277108, 1.6408045303840963e-05]
+
+    val = b0 + b1*q + b2*lt + b3*q**2 + b4*q*lt + b5*lt**2
+    return val
+
+def NRfit_vel_dyn_nedora(q, lt):
+    """
+        NR-calibrated relation for velocity of dynamical ejecta
+        Returns v_ej / c
+    """# re-fit values
+    b0, b1, b2, b3, b4, b5 = [0.3245584679500216, 0.3037063354193521,
+                              -0.0009362814001789095, -0.17383847811798092,
+                              0.00011142463805362791, 5.840741169097888e-07]
+
+    val = b0 + b1*q + b2*lt + b3*q**2 + b4*q*lt + b5*lt**2
+    return val
+
+def NRfit_log_mass_disk_nedora(q, lt):
+    """
+        NR-calibrated relation for disk mass
+        Returns log(m_disk/M) where M = m1 + m2 (natural log)
+    """ # stesso valori che ottengo dal re-fit in mdisk_kn_fit.py (solo se commento do_the_plots)
+    b0, b1, b2, b3, b4, b5 = [-1.0065191726047198, 1.142069190213931,
+                              0.0008123152157553065, -0.35127395941697265,
+                              0.0001711936647410558, -6.935939552742011e-07]
+
+    val = b0 + b1*q + b2*lt + b3*q**2 + b4*q*lt + b5*lt**2
+    return val
+
+
+if __name__ == "__main__":
+    m_ej = NRfit_recal_mass_dyn(1.1852778957839742, 2.472884198170911, 839.7030363651173, 3465.539569009505)
+    print(m_ej)

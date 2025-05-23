@@ -1,4 +1,4 @@
-# time	 magnitude	 std-mag
+# GPStime	 magnitude	 std-mag
 1187049618.0	 17.83	 0.15
 1187050395.6	 17.88	 0.03
 1187052987.5999997	 17.82	 0.03
