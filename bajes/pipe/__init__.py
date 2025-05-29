@@ -462,7 +462,7 @@ def parse_setup_options():
     parser.add_argument('--heat-time',        dest='heating_time',     type=float,   default=1.3,           help='Time coefficient for heating rate (default 1.3)')
     parser.add_argument('--heat-sigma',       dest='heating_sigma',     type=float,   default=0.11,         help='Sigma coefficient for heating rate (default 0.11)')
 
-    # Flags # aagiungi prior e modifca codice!
+    # Flags
     parser.add_argument('--use-mag-dev',        dest='use_calib_sigma_lc',  default=False,  action="store_true",    help='Include systematic deviation parameter for each band')
 
     # Prior bounds Sigma_b
