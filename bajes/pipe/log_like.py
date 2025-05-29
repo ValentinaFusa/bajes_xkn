@@ -233,21 +233,27 @@ class KNLikelihood(Likelihood):
         # initialize lightcurve model
         from ..obs.kn.lightcurve import Lightcurve
         light_kwargs    = {'v_min': v_min, 'n_v': n_v, 't_start': t_start , 'xkn_config' : kwargs['xkn_config'], 'mkn_config' : kwargs['mkn_config']}
-        self.light      = Lightcurve(times=t_axis, lambdas=filters.lambdas, approx=approx, **light_kwargs)  #qua dentro **light_kwargs ho classe 
+        self.light      = Lightcurve(times=t_axis, lambdas=filters.lambdas, approx=approx, **light_kwargs) 
 
         # calib_sigma flag
         self.use_calib_sigma = use_calib_sigma_lc
 
     def log_like(self, params):
-
+        
+        # check the dynamical velocity  parameters value (for the case with NR fit)
         if params['vel_dynamics'] > 0.333 or params['vel_dynamics'] < 1e-4:
+            logL = -np.inf
+            return logL
+        
+        # check the two disk_frac parameters values (for the case with NR fit)
+        if params['disk_frac_sec'] + params['disk_frac_wind'] > 0.6:
             logL = -np.inf
             return logL
 
         # compute lightcurve
 
         # If the used model is one inside bajes, 'mags' is a magnitudes dictionary
-        # If the used model is one inside xkn, 'mags' is a magnitudes AND times dictionary
+        # If the used model is one inside xkn, 'mags' is a magnitudes and times dictionary
         mags    = self.light.compute_mag(params)
         logL    = 0.
 
@@ -258,8 +264,8 @@ class KNLikelihood(Likelihood):
                     lambda_bi = bi
                     interp_mag = np.interp(self.filters.times[bi], self.light.times+params['t_gps'], mags[lambda_bi])
                 
-                else: # xkn model
-                    # tranform keys from band names into lambdas[nm] (ONLY FOR XKN MODELS)
+                else: # Xkn model
+                    # tranform keys from band names into lambdas[nm]
                     lambda_bi = int(self.filters.lambdas[bi]*1e9)
                     interp_mag  = np.interp(self.filters.times[bi], mags[lambda_bi]['time']+params['t_gps'], mags[lambda_bi]['mag'])
 
@@ -274,8 +280,8 @@ class KNLikelihood(Likelihood):
                     lambda_bi = bi
                     interp_mag  = np.interp(self.filters.times[bi], self.light.times+params['t_gps'], mags[lambda_bi])
                 
-                else: # xkn model
-                    # tranform keys from band names into lambdas[nm] (ONLY FOR XKN MODELS)
+                else: # Xkn model
+                    # tranform keys from band names into lambdas[nm]
                     lambda_bi = int(self.filters.lambdas[bi]*1e9)
                     interp_mag  = np.interp(self.filters.times[bi], mags[lambda_bi]['time']+params['t_gps'], mags[lambda_bi]['mag'])
 
