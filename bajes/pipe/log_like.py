@@ -245,10 +245,11 @@ class KNLikelihood(Likelihood):
             logL = -np.inf
             return logL
         
-        # check the two disk_frac parameters values (for the case with NR fit)
-        if params['disk_frac_sec'] + params['disk_frac_wind'] > 0.6:
-            logL = -np.inf
-            return logL
+        if '3-NRfits' in self.approx:
+            # check the two disk_frac parameters values (for the case with NR fit)
+            if params['disk_frac_sec'] + params['disk_frac_wind'] > 0.6:
+                logL = -np.inf
+                return logL
 
         # compute lightcurve
 
