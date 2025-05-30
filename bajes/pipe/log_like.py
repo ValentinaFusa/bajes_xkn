@@ -234,6 +234,7 @@ class KNLikelihood(Likelihood):
         from ..obs.kn.lightcurve import Lightcurve
         light_kwargs    = {'v_min': v_min, 'n_v': n_v, 't_start': t_start , 'xkn_config' : kwargs['xkn_config'], 'mkn_config' : kwargs['mkn_config']}
         self.light      = Lightcurve(times=t_axis, lambdas=filters.lambdas, approx=approx, **light_kwargs) 
+        self.approx = approx
 
         # calib_sigma flag
         self.use_calib_sigma = use_calib_sigma_lc
