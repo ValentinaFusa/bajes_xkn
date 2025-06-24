@@ -202,7 +202,8 @@ def NRfit_recal_mass_wind_nedora(mchirp, q, lambda1, lambda2, disk_frac_wind, **
 def NRfit_log_mass_dyn_nedora(q, lt):
     """
         NR-calibrated relation for mass of dynamical ejecta
-        Returns log(m_ej/M) where M = m1 + m2 (natural log)
+        Returns log(m_ej/M) where M = m1 + m2 (natural log) - 
+        Residuals = 20.360343174184003 e St Dev = 0.7912917303721327
     """
     b0, b1, b2, b3, b4, b5 = [19.11486051225742, -5.810359396825988,
                               -0.054258334940957276, -2.528180825757026,
@@ -214,7 +215,8 @@ def NRfit_log_mass_dyn_nedora(q, lt):
 def NRfit_vel_dyn_nedora(q, lt):
     """
         NR-calibrated relation for velocity of dynamical ejecta
-        Returns v_ej / c
+        Returns v_ej / c -
+        Residuals = 0.25913242031990996 e St Dev = 0.09118396501754546
     """
     b0, b1, b2, b3, b4, b5 = [0.3245584679500216, 0.3037063354193521,
                               -0.0009362814001789095, -0.17383847811798092,

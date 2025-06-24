@@ -239,7 +239,7 @@ class KNLikelihood(Likelihood):
         # calib_sigma flag
         self.use_calib_sigma = use_calib_sigma_lc
 
-    def log_like(self, params):
+    def log_like(self, params): 
         
         # check the dynamical velocity  parameters value (for the case with NR fit)
         if params['vel_dynamics'] > 0.333 or params['vel_dynamics'] < 1e-4:
